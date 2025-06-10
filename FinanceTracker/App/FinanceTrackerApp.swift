@@ -15,9 +15,6 @@ struct FinanceTrackerApp: App {
         WindowGroup {
             RootFlowView()
                 .environmentObject(router)
-                .onAppear {
-                    router.resolveInitialFlow()
-                }
         }
     }
 }

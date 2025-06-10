@@ -10,6 +10,8 @@ import SwiftUI
 struct OnboardingView: View {
     var onFinish: () -> Void = {}
     var body: some View {
-        Text("Hello, World!")
+        VStack {
+            Image(.onboardingBackground)
+        }
     }
 }

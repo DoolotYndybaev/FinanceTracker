@@ -9,9 +9,15 @@ import SwiftUI
 
 @main
 struct FinanceTrackerApp: App {
+    @StateObject private var router = AppRouter()
+
     var body: some Scene {
         WindowGroup {
-            DashboardView()
+            RootFlowView()
+                .environmentObject(router)
+                .onAppear {
+                    router.resolveInitialFlow()
+                }
         }
     }
 }

@@ -9,6 +9,7 @@ import SwiftUI
 
 extension Image {
     enum OnboardingImage {
-        static let backgroundImage = Image("onboarding_background")
+        static let backgroundImage = Image("onboarding-background")
+        static let onboardingMan = Image("onboarding-man")
     }
 }

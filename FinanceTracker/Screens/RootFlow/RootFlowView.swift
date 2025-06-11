@@ -18,8 +18,11 @@ struct RootFlowView: View {
             })
         case .onboarding:
             OnboardingView(onFinish: {
-                UserDefaults.standard.set(true, forKey: "isUserRegistered")
+                UserDefaults.standard.set(false, forKey: "isUserRegistered")
                 router.goToPin()
+            },
+                           onLoginTap: {
+                print("Login tapped")
             })
         case .pin:
             SplashView(onFinish: {

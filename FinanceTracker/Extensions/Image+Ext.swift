@@ -11,5 +11,7 @@ extension Image {
     enum OnboardingImage {
         static let backgroundImage = Image("onboarding-background")
         static let onboardingMan = Image("onboarding-man")
+        static let coint = Image("coint")
+        static let donut = Image("donut")
     }
 }

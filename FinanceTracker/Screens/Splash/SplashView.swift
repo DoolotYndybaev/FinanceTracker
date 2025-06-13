@@ -10,36 +10,53 @@ import SwiftUI
 struct SplashView: View {
     var onFinish: () -> Void
 
-    @State private var scale: CGFloat = 0.0
-    @State private var opacity: Double = 0.0
+    private let title = "FinanceTracker"
+    @State private var visibleIndices: Set<Int> = []
 
     var body: some View {
         ZStack {
-            Color.mainColor.edgesIgnoringSafeArea(.all)
+            Color.mainColor.ignoresSafeArea()
 
-
-            Text("FinanceTracker")
-                .font(.system(size: 48, weight: .bold, design: .rounded))
-                .foregroundColor(.white)
-                .scaleEffect(scale)
-                .opacity(opacity)
-                .onAppear {
-                    withAnimation(.easeOut(duration: 0.8)) {
-                        scale = 1.0
-                        opacity = 1.0
-                    }
-
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
-                        withAnimation(.easeInOut(duration: 0.5)) {
-                            scale = 0.0
-                            opacity = 0.0
-                        }
-
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-                            onFinish()
-                        }
-                    }
+            HStack(spacing: 0) {
+                ForEach(Array(title.enumerated()), id: \.offset) { index, letter in
+                    Text(String(letter))
+                        .font(.system(size: 48, weight: .bold, design: .rounded))
+                        .foregroundColor(.white)
+                        .opacity(visibleIndices.contains(index) ? 1 : 0)
+                        .offset(y: visibleIndices.contains(index)
+                                ? 0
+                                : (index % 2 == 0 ? -80 : 80)) // сверху или снизу
+                        .animation(
+                            .interpolatingSpring(stiffness: 200, damping: 18)
+                                .delay(Double(index) * 0.05),
+                            value: visibleIndices
+                        )
                 }
+            }
+        }
+        .onAppear {
+            for (index, _) in title.enumerated() {
+                DispatchQueue.main.asyncAfter(deadline: .now() + Double(index) * 0.05) {
+                    visibleIndices.insert(index)
+                }
+            }
+
+            // Завершение после всей анимации
+            let totalDuration = Double(title.count) * 0.05 + 1.5
+            DispatchQueue.main.asyncAfter(deadline: .now() + totalDuration) {
+                withAnimation(.easeInOut(duration: 0.5)) {
+                    visibleIndices.removeAll()
+                }
+
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    onFinish()
+                }
+            }
         }
     }
+}
+#Preview {
+    SplashView(onFinish: {
+        print("Splash finished")
+    })
 }

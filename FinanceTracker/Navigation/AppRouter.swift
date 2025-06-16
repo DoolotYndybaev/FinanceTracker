@@ -15,12 +15,16 @@ final class AppRouter: ObservableObject {
         flow = .onboarding
     }
 
-    func goToPin() {
-        flow = .pin
-    }
-
     func goToDashboard() {
-        flow = .dashboard
+        flow = .main(.dashboard)
+    }
+    
+    func goToAuth() {
+        flow = .auth
+    }
+    
+    func goToMain() {
+        flow = .main(.dashboard)
     }
 
     // Дополнительно: логика автоопределения flow на старте
@@ -28,10 +32,8 @@ final class AppRouter: ObservableObject {
         // Пример с UserDefaults
         if !UserDefaults.standard.bool(forKey: "isUserRegistered") {
             flow = .onboarding
-        } else if !UserDefaults.standard.bool(forKey: "isPinSet") {
-            flow = .pin
         } else {
-            flow = .dashboard
+            flow = .main(.dashboard)
         }
     }
 }

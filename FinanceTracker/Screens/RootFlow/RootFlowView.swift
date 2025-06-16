@@ -17,17 +17,27 @@ struct RootFlowView: View {
                 router.resolveInitialFlow()
             })
         case .onboarding:
-            OnboardingView(onFinish: {
-                UserDefaults.standard.set(false, forKey: "isUserRegistered")
-                router.goToPin()
-            },
-                           onLoginTap: {
-                print("Login tapped")
-            })
-        case .pin:
-            SplashView(onFinish: {
-                router.resolveInitialFlow()
-            })
+            OnboardingView(
+                onFinish: { router.goToAuth() },
+                onLoginTap: { router.goToAuth() },
+                onGetStartedTap: { router.goToAuth() }
+            )
+        case .auth:
+            AuthView {
+//                UserDefaults.standard.set(true, forKey: "isAuthorized")
+                router.goToAuth()
+            }
+        case .main(let mainFlow):
+            MainFlowView(flow: mainFlow)
+        }
+    }
+}
+
+struct MainFlowView: View {
+    let flow: MainFlow
+
+    var body: some View {
+        switch flow {
         case .dashboard:
             DashboardView()
         }

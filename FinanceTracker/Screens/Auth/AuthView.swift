@@ -1,0 +1,69 @@
+//
+//  AuthView.swift
+//  FinanceTracker
+//
+//  Created by Doolot on 14/6/25.
+//
+
+import SwiftUI
+
+struct AuthView: View {
+    @StateObject private var viewModel = AuthViewModel()
+    var onFinish: () -> Void
+
+    var body: some View {
+        VStack(spacing: 24) {
+            Text(viewModel.mode == .login ? "Welcome Back" : "Create Account")
+                .font(.title.bold())
+                .padding(.top, 40)
+
+            TextField("Email", text: $viewModel.email)
+                .keyboardType(.emailAddress)
+                .autocapitalization(.none)
+                .padding()
+                .background(Color.gray.opacity(0.1))
+                .cornerRadius(10)
+
+            SecureField("Password", text: $viewModel.password)
+                .padding()
+                .background(Color.gray.opacity(0.1))
+                .cornerRadius(10)
+
+            if viewModel.mode == .register {
+                SecureField("Confirm Password", text: $viewModel.confirmPassword)
+                    .padding()
+                    .background(Color.gray.opacity(0.1))
+                    .cornerRadius(10)
+            }
+
+            if let error = viewModel.errorMessage {
+                Text(error)
+                    .foregroundColor(.red)
+                    .font(.footnote)
+            }
+
+            PrimaryButton(
+                title: viewModel.mode == .login ? "Log In" : "Register",
+                action: {
+                    viewModel.handleAuth {
+                        onFinish()
+                    }
+                }
+            )
+
+            Button {
+                withAnimation {
+                    viewModel.mode = viewModel.mode == .login ? .register : .login
+                    viewModel.errorMessage = nil
+                }
+            } label: {
+                Text(viewModel.mode == .login ? "Don't have an account? Register" : "Already have an account? Log In")
+                    .font(.footnote)
+                    .foregroundColor(.blue)
+            }
+
+            Spacer()
+        }
+        .padding(.horizontal, 24)
+    }
+}

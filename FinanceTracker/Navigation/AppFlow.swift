@@ -8,6 +8,12 @@
 enum AppFlow {
     case splash
     case onboarding
-    case pin
+    case auth
+    case main(MainFlow)
+}
+
+enum MainFlow {
     case dashboard
+//    case transactions
+//    case settings
 }

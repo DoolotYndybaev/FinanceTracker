@@ -10,6 +10,7 @@ import SwiftUI
 struct OnboardingView: View {
     var onFinish: () -> Void
     var onLoginTap: () -> Void
+    var onGetStartedTap: () -> Void
 
     var body: some View {
         GeometryReader { geometry in
@@ -40,12 +41,22 @@ struct OnboardingView: View {
                         .scaledToFit()
                         .frame(width: 120, height: 120)
                         .offset(x: 140, y: -geometry.size.height * 0.18)
+                        .shadow(color: .black,
+                                radius: 30,
+                                x: 0,
+                                y: 30)
+
 
                     Image.OnboardingImage.coint
                         .resizable()
                         .scaledToFit()
                         .frame(width: 120, height: 120)
                         .offset(x: -120, y: -geometry.size.height * 0.25)
+                        .shadow(color: .black,
+                                radius: 30,
+                                x: 0,
+                                y: 30)
+
                 }
 
                 VStack(spacing: 16) {
@@ -53,19 +64,10 @@ struct OnboardingView: View {
                         .multilineTextAlignment(.center)
                         .font(.system(size: 28, weight: .bold))
                         .foregroundColor(Color.mainColor)
-
-                    Button(action: {
-                        onFinish()
-                    }) {
-                        Text("Get Started")
-                            .font(.headline)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .foregroundColor(.white)
+                    
+                    PrimaryButton(title: "Get Started") {
+                        onGetStartedTap()
                     }
-                    .background(Color.mainColor)
-                    .cornerRadius(30)
-                    .shadow(color: .black, radius: 5, x: 0, y: 5)
 
                     HStack(spacing: 4) {
                         Text("Already Have Account?")
@@ -94,6 +96,8 @@ struct OnboardingView: View {
     OnboardingView {
         print("")
     } onLoginTap: {
+        print("")
+    } onGetStartedTap: {
         print("")
     }
 }

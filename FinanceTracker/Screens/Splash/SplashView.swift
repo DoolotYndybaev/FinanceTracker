@@ -27,7 +27,7 @@ struct SplashView: View {
                                 ? 0
                                 : (index % 2 == 0 ? -80 : 80)) // сверху или снизу
                         .animation(
-                            .interpolatingSpring(stiffness: 200, damping: 18)
+                            .interpolatingSpring(stiffness: 150, damping: 15)
                                 .delay(Double(index) * 0.05),
                             value: visibleIndices
                         )

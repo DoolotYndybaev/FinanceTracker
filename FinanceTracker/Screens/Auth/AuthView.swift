@@ -10,6 +10,8 @@ import SwiftUI
 struct AuthView: View {
     @StateObject private var viewModel = AuthViewModel()
     var onFinish: () -> Void
+    @State private var isShowingAlert = false
+    @State private var alertMessage: String = ""
 
     var body: some View {
         VStack(spacing: 24) {
@@ -36,12 +38,6 @@ struct AuthView: View {
                     .cornerRadius(10)
             }
 
-            if let error = viewModel.errorMessage {
-                Text(error)
-                    .foregroundColor(.red)
-                    .font(.footnote)
-            }
-
             PrimaryButton(
                 title: viewModel.mode == .login ? "Log In" : "Register",
                 action: {
@@ -57,13 +53,31 @@ struct AuthView: View {
                     viewModel.errorMessage = nil
                 }
             } label: {
-                Text(viewModel.mode == .login ? "Don't have an account? Register" : "Already have an account? Log In")
+                Text(viewModel.mode == .login ? "Don't have an account? Register"
+                                              : "Already have an account? Log In")
                     .font(.footnote)
                     .foregroundColor(.blue)
             }
-
-            Spacer()
         }
         .padding(.horizontal, 24)
+        .onReceive(viewModel.$errorMessage.compactMap { $0 }) { message in
+            alertMessage = message
+            isShowingAlert = true
+        }
+        .alert(isPresented: $isShowingAlert) {
+            Alert(
+                title: Text("Error"),
+                message: Text(alertMessage),
+                dismissButton: .default(Text("OK")) {
+                    viewModel.errorMessage = nil
+                }
+            )
+        }
+    }
+}
+
+#Preview {
+    AuthView {
+        print("")
     }
 }

@@ -20,6 +20,10 @@ final class AuthViewModel: ObservableObject {
     func handleAuth(success: @escaping () -> Void) {
         switch mode {
         case .login:
+            guard !email.isEmpty, !password.isEmpty else { 
+                errorMessage = "Email and password cannot be empty"
+                return }
+
             let storedEmail = UserDefaults.standard.string(forKey: "userEmail")
             let storedPassword = UserDefaults.standard.string(forKey: "userPassword")
             if email == storedEmail && password == storedPassword {

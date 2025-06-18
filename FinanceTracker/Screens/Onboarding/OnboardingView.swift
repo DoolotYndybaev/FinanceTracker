@@ -21,30 +21,22 @@ struct OnboardingView: View {
                         .scaledToFit()
                         .clipped()
                         .ignoresSafeArea(edges: .top)
-                        .frame(height: geometry.size.height * 0.556)
+                        .frame(width: geometry.size.width * 1.2, height: geometry.size.height / 1.8)
                         .shadow(color: .black,
-                                radius: 5,
+                                radius: 8,
                                 x: 0,
-                                y: 5)
+                                y: 20)
 
                     Image.OnboardingImage.onboardingMan
                         .resizable()
                         .scaledToFit()
                         .frame(height: geometry.size.height * 0.55)
-                        .shadow(color: .black,
-                                radius: 15,
-                                x: 0,
-                                y: 20)
 
                     Image.OnboardingImage.donut
                         .resizable()
                         .scaledToFit()
                         .frame(width: 120, height: 120)
                         .offset(x: 140, y: -geometry.size.height * 0.18)
-                        .shadow(color: .black,
-                                radius: 30,
-                                x: 0,
-                                y: 30)
 
 
                     Image.OnboardingImage.coint
@@ -52,11 +44,6 @@ struct OnboardingView: View {
                         .scaledToFit()
                         .frame(width: 120, height: 120)
                         .offset(x: -120, y: -geometry.size.height * 0.25)
-                        .shadow(color: .black,
-                                radius: 30,
-                                x: 0,
-                                y: 30)
-
                 }
 
                 VStack(spacing: 16) {

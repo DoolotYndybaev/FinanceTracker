@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 final class DashboardViewModel: ObservableObject {
-    private let service: TransactionService
+    private let service: TransactionProtocol
 
     @Published var transactions: [Transaction] = []
     @Published var incomeTotal: Double = 0

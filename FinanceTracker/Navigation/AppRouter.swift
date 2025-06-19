@@ -22,10 +22,6 @@ final class AppRouter: ObservableObject {
     func goToAuth() {
         flow = .auth
     }
-    
-    func goToMain() {
-        flow = .main(.dashboard)
-    }
 
     // Дополнительно: логика автоопределения flow на старте
     func resolveInitialFlow() {

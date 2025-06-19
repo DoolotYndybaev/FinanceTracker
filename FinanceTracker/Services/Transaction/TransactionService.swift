@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class TransactionService {
+final class TransactionService: TransactionProtocol {
     private(set) var transactions: [Transaction] = []
 
     func add(_ transaction: Transaction) {

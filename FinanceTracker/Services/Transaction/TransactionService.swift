@@ -6,9 +6,10 @@
 //
 
 import Foundation
+import Combine
 
-final class TransactionService: TransactionProtocol {
-    private(set) var transactions: [Transaction] = []
+final class TransactionService: TransactionProtocol, ObservableObject {
+    @Published private(set) var transactions: [Transaction] = []
 
     func add(_ transaction: Transaction) {
         transactions.append(transaction)

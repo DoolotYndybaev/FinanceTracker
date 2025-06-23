@@ -10,12 +10,13 @@ import Combine
 
 final class DashboardViewModel: ObservableObject {
     private let service: TransactionProtocol
+    private var cancellables = Set<AnyCancellable>()
 
     @Published var transactions: [Transaction] = []
     @Published var incomeTotal: Double = 0
     @Published var expenseTotal: Double = 0
 
-    init(service: TransactionService) {
+    init(service: TransactionProtocol) {
         self.service = service
         load()
     }
@@ -28,6 +29,5 @@ final class DashboardViewModel: ObservableObject {
 
     func addTransaction(_ transaction: Transaction) {
         service.add(transaction)
-        load()
     }
 }

@@ -26,6 +26,12 @@ struct OnboardingView: View {
                                 radius: 8,
                                 x: 0,
                                 y: 20)
+                    
+                    Capsule()
+                        .fill(Color.black.opacity(0.1))
+                        .frame(width: geometry.size.width * 0.5, height: 2)
+                        .blur(radius: 0.5)
+                        .offset(y: geometry.size.height * 0.277)
 
                     Image.OnboardingImage.onboardingMan
                         .resizable()

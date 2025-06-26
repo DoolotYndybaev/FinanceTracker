@@ -78,6 +78,6 @@ struct AuthView: View {
 
 #Preview {
     AuthView {
-        print("")
+        print("AuthView finished")
     }
 }

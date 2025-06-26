@@ -1,5 +1,5 @@
 //
-//  RootFlowView.swift
+//  AppRootView.swift
 //  FinanceTracker
 //
 //  Created by Doolot on 10/6/25.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct RootFlowView: View {
+struct AppRootView: View {
     @EnvironmentObject var router: AppRouter
 
     var body: some View {
@@ -18,14 +18,17 @@ struct RootFlowView: View {
             })
         case .onboarding:
             OnboardingView(
-                onFinish: { router.goToAuth() },
-                onLoginTap: { router.goToAuth() },
-                onGetStartedTap: { router.goToAuth() }
+                onLoginTap: { router.goToLogin() },
+                onGetStartedTap: { router.goToRegister() }
             )
-        case .auth:
+        case .login:
             AuthView {
 //                UserDefaults.standard.set(true, forKey: "isAuthorized")
-                router.goToAuth()
+                router.goToLogin()
+            }
+        case .letsStart:
+            AuthView {
+                router.goToRegister()
             }
         case .main(let mainFlow):
             MainFlowView(flow: mainFlow)

@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct OnboardingView: View {
-    var onFinish: () -> Void
     var onLoginTap: () -> Void
     var onGetStartedTap: () -> Void
 
@@ -87,10 +86,8 @@ struct OnboardingView: View {
 
 #Preview {
     OnboardingView {
-        print("")
-    } onLoginTap: {
-        print("")
+        print("onLoginTap")
     } onGetStartedTap: {
-        print("")
+        print("onGetStartedTap")
     }
 }

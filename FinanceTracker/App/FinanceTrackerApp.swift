@@ -13,7 +13,7 @@ struct FinanceTrackerApp: App {
 
     var body: some Scene {
         WindowGroup {
-            RootFlowView()
+            AppRootView()
                 .environmentObject(router)
         }
     }

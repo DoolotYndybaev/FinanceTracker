@@ -8,8 +8,7 @@
 enum AppFlow {
     case splash
     case onboarding
-    case login
-    case letsStart
+    case auth(AuthViewModel.Mode)
     case main(MainFlow)
 }
 

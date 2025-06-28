@@ -15,7 +15,7 @@ struct OnboardingView: View {
         GeometryReader { geometry in
             VStack(spacing: 30) {
                 ZStack {
-                    Image.OnboardingImage.backgroundImage
+                    Image.OnboardingImages.backgroundImage
                         .resizable()
                         .scaledToFit()
                         .clipped()
@@ -32,19 +32,19 @@ struct OnboardingView: View {
                         .blur(radius: 0.5)
                         .offset(y: geometry.size.height * 0.277)
 
-                    Image.OnboardingImage.onboardingMan
+                    Image.OnboardingImages.onboardingMan
                         .resizable()
                         .scaledToFit()
                         .frame(height: geometry.size.height * 0.55)
 
-                    Image.OnboardingImage.donut
+                    Image.OnboardingImages.donut
                         .resizable()
                         .scaledToFit()
                         .frame(width: 120, height: 120)
                         .offset(x: 140, y: -geometry.size.height * 0.18)
 
 
-                    Image.OnboardingImage.coint
+                    Image.OnboardingImages.coint
                         .resizable()
                         .scaledToFit()
                         .frame(width: 120, height: 120)

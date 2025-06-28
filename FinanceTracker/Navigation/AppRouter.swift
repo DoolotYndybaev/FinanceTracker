@@ -19,12 +19,8 @@ final class AppRouter: ObservableObject {
         flow = .main(.dashboard)
     }
     
-    func goToLogin() {
-        flow = .login
-    }
-
-    func goToRegister() {
-        flow = .letsStart
+    func goToAuth(mode: AuthViewModel.Mode) {
+        flow = .auth(mode)
     }
 
     // Дополнительно: логика автоопределения flow на старте

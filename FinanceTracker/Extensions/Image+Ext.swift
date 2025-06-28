@@ -8,7 +8,11 @@
 import SwiftUI
 
 extension Image {
-    enum OnboardingImage {
+    enum AuthImages {
+        static let smileMan = Image("smile-man")
+    }
+
+    enum OnboardingImages {
         static let backgroundImage = Image("onboarding-background")
         static let onboardingMan = Image("onboarding-man")
         static let coint = Image("coint")

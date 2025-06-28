@@ -8,16 +8,27 @@
 import SwiftUI
 
 struct AuthView: View {
-    @StateObject private var viewModel = AuthViewModel()
+    @StateObject private var viewModel: AuthViewModel
     var onFinish: () -> Void
     @State private var isShowingAlert = false
     @State private var alertMessage: String = ""
 
+    init(viewModel: AuthViewModel, onFinish: @escaping () -> Void) {
+        _viewModel = StateObject(wrappedValue: viewModel)
+        self.onFinish = onFinish
+    }
+
     var body: some View {
+        Text(viewModel.mode == .login ? "Welcome Back" : "Create Account")
+            .font(.title.bold())
+            .padding(.top)
+            .foregroundStyle(.main)
+
         VStack(spacing: 24) {
-            Text(viewModel.mode == .login ? "Welcome Back" : "Create Account")
-                .font(.title.bold())
-                .padding(.top, 40)
+            Image.AuthImages.smileMan
+                .resizable()
+                .scaledToFit()
+                .frame(width: 160, height: 160)
 
             TextField("Email", text: $viewModel.email)
                 .keyboardType(.emailAddress)
@@ -77,7 +88,7 @@ struct AuthView: View {
 }
 
 #Preview {
-    AuthView {
+    AuthView(viewModel: AuthViewModel(mode: .register)) {
         print("AuthView finished")
     }
 }

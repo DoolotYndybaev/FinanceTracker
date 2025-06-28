@@ -17,6 +17,10 @@ final class AuthViewModel: ObservableObject {
     @Published var confirmPassword = ""
     @Published var errorMessage: String?
     
+    init(mode: Mode = .login) {
+        self.mode = mode
+    }
+
     func handleAuth(success: @escaping () -> Void) {
         switch mode {
         case .login:
@@ -24,20 +28,22 @@ final class AuthViewModel: ObservableObject {
                 errorMessage = "Email and password cannot be empty"
                 return }
 
-            let storedEmail = UserDefaults.standard.string(forKey: "userEmail")
-            let storedPassword = UserDefaults.standard.string(forKey: "userPassword")
-            if email == storedEmail && password == storedPassword {
-                success()
-            } else {
-                errorMessage = "Incorrect credentials"
-            }
+            success()
+
+//            let storedEmail = UserDefaults.standard.string(forKey: "userEmail")
+//            let storedPassword = UserDefaults.standard.string(forKey: "userPassword")
+//            if email == storedEmail && password == storedPassword {
+//                success()
+//            } else {
+//                errorMessage = "Incorrect credentials"
+//            }
         case .register:
             guard password == confirmPassword else {
                 errorMessage = "Passwords do not match"
                 return
             }
-            UserDefaults.standard.set(email, forKey: "userEmail")
-            UserDefaults.standard.set(password, forKey: "userPassword")
+//            UserDefaults.standard.set(email, forKey: "userEmail")
+//            UserDefaults.standard.set(password, forKey: "userPassword")
             success()
         }
     }

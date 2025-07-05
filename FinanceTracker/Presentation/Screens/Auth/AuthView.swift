@@ -25,7 +25,7 @@ struct AuthView: View {
             .foregroundStyle(.main)
 
         VStack(spacing: 24) {
-            Image(viewModel.mode == .login ? Image.AuthImages.smileMan : Image.AuthImages.welcomeMan)
+            Image(viewModel.mode == .login ? Image.AuthImages.welcomeMan : Image.AuthImages.smileMan)
 
                 .resizable()
                 .scaledToFit()

@@ -26,9 +26,9 @@ final class CoreDataTransactionService: TransactionProtocol {
         }
     }
 
-    func add(_ transaction: Transaction) {
-        _ = TransactionEntity.fromModel(transaction, context: context)
-        
+    func add(_ transaction: Transaction, to account: Account) {
+        let accountEntity = AccountEntity.upsert(from: account, context: context)
+        _ = TransactionEntity.upsert(from: transaction, account: accountEntity, context: context)
         CoreDataStack.shared.saveContext()
     }
 

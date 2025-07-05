@@ -21,8 +21,7 @@ final class CoreDataUserService {
     }
 
     func saveUser(_ model: User) {
-        let entity = UserEntity(context: context)
-        entity.update(from: model, context: context)
+        let _ = UserEntity.upsert(from: model, context: context)
         CoreDataStack.shared.saveContext()
     }
 

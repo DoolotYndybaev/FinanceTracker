@@ -27,7 +27,7 @@ final class DashboardViewModel: ObservableObject {
         expenseTotal = service.total(for: .expense)
     }
 
-    func addTransaction(_ transaction: Transaction) {
-        service.add(transaction)
+    func addTransaction(_ transaction: Transaction, to account: Account) {
+        service.add(transaction, to: account)
     }
 }

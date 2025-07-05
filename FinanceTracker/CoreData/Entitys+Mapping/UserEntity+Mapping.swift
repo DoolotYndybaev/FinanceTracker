@@ -17,17 +17,25 @@ extension UserEntity {
         )
     }
 
-    func update(from model: User, context: NSManagedObjectContext) {
-        self.id = model.id
-        self.name = model.name
-        self.email = model.email
+    static func upsert(from model: User, context: NSManagedObjectContext) -> UserEntity {
+        let request: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
+        request.predicate = NSPredicate(format: "id == %@", model.id as CVarArg)
+        request.fetchLimit = 1
 
+        let entity = (try? context.fetch(request).first) ?? UserEntity(context: context)
+        entity.id = model.id
+        entity.name = model.name
+        entity.email = model.email
+
+        // 🔁 Upsert accounts
         let accountEntities = model.accounts.map { account in
-            let entity = AccountEntity(context: context)
-            entity.update(from: account, context: context)
-            return entity
+            let accEntity = AccountEntity.upsert(from: account, context: context)
+            accEntity.user = entity
+            return accEntity
         }
 
-        self.accounts = NSSet(array: accountEntities)
+        entity.accounts = NSSet(array: accountEntities)
+
+        return entity
     }
 }

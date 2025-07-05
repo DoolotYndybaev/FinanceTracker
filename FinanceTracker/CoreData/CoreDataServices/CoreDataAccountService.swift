@@ -19,8 +19,7 @@ final class CoreDataAccountService {
     }
 
     func add(_ account: Account) {
-        let entity = AccountEntity(context: context)
-        entity.update(from: account, context: context)
+        _ = AccountEntity.upsert(from: account, context: context)
         CoreDataStack.shared.saveContext()
     }
 

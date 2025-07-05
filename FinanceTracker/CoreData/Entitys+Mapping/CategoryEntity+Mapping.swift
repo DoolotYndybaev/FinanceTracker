@@ -9,14 +9,20 @@ import CoreData
 
 extension CategoryEntity {
     
-    static func fromModel(_ model: Category, context: NSManagedObjectContext) -> CategoryEntity {
-         let entity = CategoryEntity(context: context)
-         entity.id = model.id
-         entity.name = model.name
-         entity.icon = model.icon
-         entity.isIncome = model.isIncome
-         return entity
-     }
+    static func upsert(from model: Category, context: NSManagedObjectContext) -> CategoryEntity {
+        let request: NSFetchRequest<CategoryEntity> = CategoryEntity.fetchRequest()
+        request.predicate = NSPredicate(format: "id == %@", model.id as CVarArg)
+        request.fetchLimit = 1
+        
+        let entity = (try? context.fetch(request).first) ?? CategoryEntity(context: context)
+
+        entity.id = model.id
+        entity.name = model.name
+        entity.icon = model.icon
+        entity.isIncome = model.isIncome
+
+        return entity
+    }
 
     func toModel() -> Category {
         Category(
@@ -25,12 +31,5 @@ extension CategoryEntity {
             icon: self.icon ?? "💰",
             isIncome: self.isIncome
         )
-    }
-
-    func update(from model: Category, context: NSManagedObjectContext) {
-        self.id = model.id
-        self.name = model.name
-        self.icon = model.icon
-        self.isIncome = model.isIncome
     }
 }

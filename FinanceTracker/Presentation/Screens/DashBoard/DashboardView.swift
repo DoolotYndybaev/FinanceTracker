@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct DashboardView: View {
-    @StateObject private var viewModel = DashboardViewModel(service: TransactionService())
+    @StateObject private var viewModel = DashboardViewModel(service: CoreDataTransactionService())
 
     var body: some View {
         NavigationView {

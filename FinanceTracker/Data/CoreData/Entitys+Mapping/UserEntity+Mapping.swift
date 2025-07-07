@@ -13,6 +13,7 @@ extension UserEntity {
             id: self.id ?? UUID(),
             name: self.name ?? "No Name",
             email: self.email ?? "no@email.com",
+            password: self.password ?? "",
             accounts: (self.accounts as? Set<AccountEntity>)?.map { $0.toModel() } ?? []
         )
     }
@@ -26,6 +27,7 @@ extension UserEntity {
         entity.id = model.id
         entity.name = model.name
         entity.email = model.email
+        entity.password = model.password
 
         // 🔁 Upsert accounts
         let accountEntities = model.accounts.map { account in

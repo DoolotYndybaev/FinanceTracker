@@ -20,7 +20,7 @@ final class CoreDataUserService {
         return try? context.fetch(request).first?.toModel()
     }
 
-    func saveUser(_ model: User) {
+    func saveUser(_ model: User) throws {
         let _ = UserEntity.upsert(from: model, context: context)
         CoreDataStack.shared.saveContext()
     }

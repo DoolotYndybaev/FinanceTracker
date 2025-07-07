@@ -11,5 +11,6 @@ struct User: Identifiable, Codable {
     let id: UUID
     var name: String
     var email: String
+    var password: String
     var accounts: [Account]
 }

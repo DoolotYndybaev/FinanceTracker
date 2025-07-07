@@ -34,6 +34,9 @@ struct DashboardView: View {
                             .foregroundColor(transaction.type == .income ? .green : .red)
                     }
                 }
+                Button("Logout") {
+                    UserSession().logOut()
+                }
             }
             .padding()
             .navigationTitle("Dashboard")

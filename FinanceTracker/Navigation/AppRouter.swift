@@ -10,6 +10,11 @@ import Combine
 
 final class AppRouter: ObservableObject {
     @Published var flow: AppFlow = .splash
+    private let session = UserSession()
+
+    init () {
+        session.restore()
+    }
 
     func goToOnboarding() {
         flow = .onboarding
@@ -25,11 +30,6 @@ final class AppRouter: ObservableObject {
 
     // Дополнительно: логика автоопределения flow на старте
     func resolveInitialFlow() {
-        // Пример с UserDefaults
-        if !UserDefaults.standard.bool(forKey: "isUserRegistered") {
-            flow = .onboarding
-        } else {
-            flow = .main(.dashboard)
-        }
+        flow = session.isLoggedIn ? .main(.dashboard) : .onboarding
     }
 }

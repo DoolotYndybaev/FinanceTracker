@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct AuthView: View {
-    @StateObject private var viewModel: AuthViewModel
     var onFinish: () -> Void
+
+    @StateObject private var viewModel: AuthViewModel
     @State private var isShowingAlert = false
     @State private var alertMessage: String = ""
 
@@ -73,7 +74,7 @@ struct AuthView: View {
         }
         .padding(.horizontal, 24)
         .onReceive(viewModel.$errorMessage.compactMap { $0 }) { message in
-            alertMessage = message
+            alertMessage = message.rawValue
             isShowingAlert = true
         }
         .alert(isPresented: $isShowingAlert) {

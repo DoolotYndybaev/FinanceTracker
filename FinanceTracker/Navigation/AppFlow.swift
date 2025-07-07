@@ -14,6 +14,4 @@ enum AppFlow {
 
 enum MainFlow {
     case dashboard
-//    case transactions
-//    case settings
 }

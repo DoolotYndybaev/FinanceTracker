@@ -10,9 +10,10 @@ import Combine
 
 final class AppRouter: ObservableObject {
     @Published var flow: AppFlow = .splash
-    private let session = UserSession()
+    private var session = UserSession()
 
-    init () {
+    init(session: UserSession) {
+        self.session = session
         session.restore()
     }
 
@@ -21,7 +22,15 @@ final class AppRouter: ObservableObject {
     }
 
     func goToDashboard() {
-        flow = .main(.dashboard)
+        flow = .main(.tabBar(.dashboard))
+    }
+
+    func goToExchange() {
+        flow = .main(.tabBar(.exchange))
+    }
+
+    func goToProfile() {
+        flow = .main(.tabBar(.profile))
     }
     
     func goToAuth(mode: AuthViewModel.Mode) {
@@ -30,6 +39,6 @@ final class AppRouter: ObservableObject {
 
     // Дополнительно: логика автоопределения flow на старте
     func resolveInitialFlow() {
-        flow = session.isLoggedIn ? .main(.dashboard) : .onboarding
+        flow = session.isLoggedIn ? .main(.tabBar(.dashboard)) : .onboarding
     }
 }

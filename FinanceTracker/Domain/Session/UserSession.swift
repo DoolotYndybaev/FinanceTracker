@@ -25,6 +25,9 @@ final class UserSession: ObservableObject {
     }
 
     func restore(using userService: CoreDataUserService = CoreDataUserService()) {
-        currentUser = userService.fetchUser()
+        let user = userService.fetchUser()
+        DispatchQueue.main.async {
+            self.currentUser = user
+        }
     }
 }

@@ -9,6 +9,7 @@ import SwiftUI
 
 struct AppRootView: View {
     @EnvironmentObject var router: AppRouter
+    @EnvironmentObject var session: UserSession
 
     var body: some View {
         switch router.flow {
@@ -22,24 +23,16 @@ struct AppRootView: View {
                 onGetStartedTap: { router.goToAuth(mode: .register) }
             )
         case .auth(let mode):
-            let viewModel = AuthViewModel(mode: mode)
-            AuthView(viewModel: viewModel) {
+            AuthView(viewModel: AuthViewModel(mode: mode, session: session)) {
                 hideKeyboard()
                 router.goToDashboard()
             }
         case .main(let mainFlow):
-            MainFlowView(flow: mainFlow)
+            switch mainFlow {
+            case .tabBar:
+                MainTabView()
+            }
         }
     }
 }
 
-struct MainFlowView: View {
-    let flow: MainFlow
-
-    var body: some View {
-        switch flow {
-        case .dashboard:
-            DashboardView()
-        }
-    }
-}

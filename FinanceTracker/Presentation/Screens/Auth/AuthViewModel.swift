@@ -19,15 +19,18 @@ final class AuthViewModel: ObservableObject {
     }
 
     @Published var mode: Mode = .login
+    @Published var name = ""
     @Published var email = ""
     @Published var password = ""
     @Published var confirmPassword = ""
     @Published var errorMessage: ErrorsFields?
 
     private let userService = CoreDataUserService()
+    private let session: UserSession
     
-    init(mode: Mode = .login) {
+    init(mode: Mode = .login, session: UserSession) {
         self.mode = mode
+        self.session = session
     }
 
     func handleAuth(success: @escaping () -> Void) {
@@ -40,7 +43,7 @@ final class AuthViewModel: ObservableObject {
             if let user = userService.fetchUser(),
                user.email == email,
                user.password == password {
-                print("User logged in successfully!")
+                session.logIn(user: user)
                 success()
             } else {
                 errorMessage = .emailAndPasswordNotMatch
@@ -56,18 +59,20 @@ final class AuthViewModel: ObservableObject {
                 errorMessage = .passwordsNotMatch
                 return
             }
+            let newUser = User(
+                id: UUID(),
+                name: name,
+                email: email,
+                password: password,
+                accounts: []
+            )
+            
             do {
-                try userService.saveUser(.init(id: UUID(),
-                                           name: "",
-                                           email: email,
-                                           password: password,
-                                           accounts: []))
+                try userService.saveUser(newUser)
+                session.logIn(user: newUser)
                 success()
-                print("User saved successfully!")
-            }
-            catch {
+            } catch {
                 errorMessage = .errorSavingUser
-                print("Error saving user")
             }
         }
     }

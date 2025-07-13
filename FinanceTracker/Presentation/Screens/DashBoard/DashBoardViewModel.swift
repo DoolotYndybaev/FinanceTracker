@@ -6,28 +6,25 @@
 //
 
 import Foundation
-import Combine
 
 final class DashboardViewModel: ObservableObject {
-    private let service: TransactionProtocol
-    private var cancellables = Set<AnyCancellable>()
-
     @Published var transactions: [Transaction] = []
-    @Published var incomeTotal: Double = 0
-    @Published var expenseTotal: Double = 0
+    private let transactionService: TransactionProtocol
 
-    init(service: TransactionProtocol) {
-        self.service = service
-        load()
+    init(transactionService: TransactionProtocol = CoreDataTransactionService()) {
+        self.transactionService = transactionService
+        self.transactions = transactionService.transactions
     }
 
-    func load() {
-        transactions = service.transactions
-        incomeTotal = service.total(for: .income)
-        expenseTotal = service.total(for: .expense)
+    var totalIncome: Double {
+        transactionService.total(for: .income)
     }
 
-    func addTransaction(_ transaction: Transaction, to account: Account) {
-        service.add(transaction, to: account)
+    var totalExpense: Double {
+        transactionService.total(for: .expense)
+    }
+
+    var totalBalance: Double {
+        totalIncome - totalExpense
     }
 }

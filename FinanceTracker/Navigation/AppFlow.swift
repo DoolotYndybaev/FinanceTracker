@@ -13,5 +13,11 @@ enum AppFlow {
 }
 
 enum MainFlow {
+    case tabBar(TabFlow)
+}
+
+enum TabFlow {
     case dashboard
+    case exchange
+    case profile
 }

@@ -32,6 +32,13 @@ struct AuthView: View {
                 .scaledToFit()
                 .frame(width: 160, height: 160)
 
+            TextField("Name", text: $viewModel.name)
+                .keyboardType(.emailAddress)
+                .autocapitalization(.none)
+                .padding()
+                .background(Color.gray.opacity(0.1))
+                .cornerRadius(10)
+
             TextField("Email", text: $viewModel.email)
                 .keyboardType(.emailAddress)
                 .autocapitalization(.none)
@@ -90,7 +97,7 @@ struct AuthView: View {
 }
 
 #Preview {
-    AuthView(viewModel: AuthViewModel(mode: .register)) {
+    AuthView(viewModel: AuthViewModel(mode: .register, session: UserSession())) {
         print("AuthView finished")
     }
 }

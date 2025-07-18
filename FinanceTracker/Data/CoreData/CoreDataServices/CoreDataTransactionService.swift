@@ -8,7 +8,8 @@
 import Foundation
 import CoreData
 
-final class CoreDataTransactionService: TransactionProtocol {
+final class CoreDataTransactionService: TransactionDataServiceProtocol {
+    
     private let context: NSManagedObjectContext
 
     init(context: NSManagedObjectContext = CoreDataStack.shared.context) {
@@ -49,5 +50,10 @@ final class CoreDataTransactionService: TransactionProtocol {
         } catch {
             print("⚠️ Failed to delete all transactions:", error)
         }
+    }
+
+    func upsert(_ transaction: Transaction, account: Account, context: NSManagedObjectContext) -> TransactionEntity {
+        let accountEntity = AccountEntity.upsert(from: account, context: context)
+        return TransactionEntity.upsert(from: transaction, account: accountEntity, context: context)
     }
 }

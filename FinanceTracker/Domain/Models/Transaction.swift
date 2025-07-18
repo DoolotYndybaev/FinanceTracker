@@ -7,12 +7,12 @@
 
 import Foundation
 
-enum TransactionType: String, Codable {
+enum TransactionType: String, Codable, Hashable {
     case income
     case expense
 }
 
-struct Transaction: Identifiable, Codable {
+struct Transaction: Identifiable, Codable, Hashable {
     let id: UUID
     let amount: Double
     let date: Date

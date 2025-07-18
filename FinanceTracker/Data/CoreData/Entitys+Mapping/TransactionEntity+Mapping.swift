@@ -31,7 +31,7 @@ extension TransactionEntity {
         return entity
     }
 
-    func toModel() -> Transaction {
+    func toModel(includeAccount: Bool = false) -> Transaction {
         Transaction(
             id: self.id ?? UUID(),
             amount: self.amount,

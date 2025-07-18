@@ -9,18 +9,77 @@ import SwiftUI
 
 struct DashboardView: View {
     @EnvironmentObject var session: UserSession
-    @StateObject private var viewModel = DashboardViewModel()
+    @StateObject private var viewModel: DashboardViewModel
+    @State private var isPresentingAddAccount = false
+
+    private let addAccountUseCase: AddAccountUseCase
+
+    init() {
+        let context = CoreDataStack.shared.context
+
+        let addTransactionUseCase = AddTransactionUseCase(
+            transactionService: CoreDataTransactionService(context: context),
+            accountService: CoreDataAccountService(context: context),
+            context: context
+        )
+
+        let userService = CoreDataUserService(context: context)
+        self.addAccountUseCase = AddAccountUseCase(userService: userService)
+
+        _viewModel = StateObject(wrappedValue: DashboardViewModel(addTransactionUseCase: addTransactionUseCase))
+    }
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 24) {
-                headerSection
-                balanceCard
-                transactionsSection
+        ZStack(alignment: .bottomTrailing) {
+            ScrollView {
+                VStack(spacing: 24) {
+                    headerSection
+                    balanceCard
+                    transactionsSection
+                }
+                .padding()
             }
-            .padding()
+            .background(Color.main)
+
+
+            Button(action: {
+                viewModel.isPresentingAddTransaction = true
+            }) {
+                Image(systemName: "plus")
+                    .font(.system(size: 24, weight: .bold))
+                    .frame(width: 56, height: 56)
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(12)
+                    .shadow(radius: 8)
+            }
+            .padding([.bottom, .trailing], 24)
+            .sheet(isPresented: $viewModel.isPresentingAddTransaction) {
+                AddTransactionView(
+                    accounts: session.currentUser?.accounts ?? [],
+                    categories: viewModel.categories,
+                    onSave: { transaction, account in
+                        viewModel.addTransaction(transaction, to: account)
+                    }
+                )
+            }
+            .sheet(isPresented: $isPresentingAddAccount) {
+                AddAccountView { newAccount in
+                    do {
+                        try addAccountUseCase.execute(newAccount)
+                        session.restore() // обновим session.currentUser
+                    } catch {
+                        print("Ошибка при добавлении счёта: \(error)")
+                    }
+                    isPresentingAddAccount = false
+                }
+            }
+            .onAppear {
+                if (session.currentUser?.accounts ?? []).isEmpty {
+                    isPresentingAddAccount = true
+                }
+            }
         }
-        .background(Color.main)
     }
 
     private var headerSection: some View {
@@ -72,7 +131,7 @@ struct DashboardView: View {
                     .font(.headline)
                 Spacer()
                 Button("See all") { }
-                    .font(.footnote)
+                    .font(.callout)
             }
             
             ForEach(viewModel.transactions.prefix(5)) { tx in
@@ -105,5 +164,42 @@ struct TransactionRowView: View {
                 .foregroundColor(transaction.type == .income ? .green : .red)
         }
         .padding(.vertical, 4)
+    }
+}
+
+struct AddAccountView: View {
+    @Environment(\.dismiss) var dismiss
+    @State private var name: String = ""
+    @State private var balance: String = ""
+
+    var onSave: (Account) -> Void
+
+    var body: some View {
+        NavigationView {
+            Form {
+                Section(header: Text("Account Info")) {
+                    TextField("Account Name", text: $name)
+                    TextField("Initial Balance", text: $balance)
+                        .keyboardType(.decimalPad)
+                }
+            }
+            .navigationTitle("New Account")
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") {
+                        guard let amount = Double(balance) else { return }
+                        let account = Account(id: UUID(), name: name, balance: amount, transactions: [])
+                        onSave(account)
+                        dismiss()
+                    }
+                }
+
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {
+                        dismiss()
+                    }
+                }
+            }
+        }
     }
 }

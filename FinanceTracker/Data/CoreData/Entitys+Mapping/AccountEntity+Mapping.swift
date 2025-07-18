@@ -27,12 +27,19 @@ extension AccountEntity {
         return entity
     }
     
-    func toModel() -> Account {
-        Account(
+    func toModel(includeTransactions: Bool = true) -> Account {
+        let txs: [Transaction] = {
+            guard includeTransactions else { return [] }
+            return (self.transactions as? Set<TransactionEntity>)?.map {
+                $0.toModel(includeAccount: false)
+            } ?? []
+        }()
+
+        return Account(
             id: self.id ?? UUID(),
             name: self.name ?? "Unnamed Account",
             balance: self.balance,
-            transactions: (self.transactions as? Set<TransactionEntity>)?.map { $0.toModel() } ?? []
+            transactions: txs
         )
     }
 }

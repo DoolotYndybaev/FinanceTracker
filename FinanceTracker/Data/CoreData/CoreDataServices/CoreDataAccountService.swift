@@ -6,7 +6,7 @@
 //
 import CoreData
 
-final class CoreDataAccountService {
+final class CoreDataAccountService: AccountDataServiceProtocol {
     private let context: NSManagedObjectContext
 
     init(context: NSManagedObjectContext = CoreDataStack.shared.context) {
@@ -33,5 +33,9 @@ final class CoreDataAccountService {
         } catch {
             print("⚠️ Failed to delete all accounts:", error)
         }
+    }
+
+    func upsert(_ account: Account, context: NSManagedObjectContext) -> AccountEntity {
+        return AccountEntity.upsert(from: account, context: context)
     }
 }

@@ -16,6 +16,8 @@ struct FinanceTrackerApp: App {
         let session = UserSession()
         _session = StateObject(wrappedValue: session)
         _router = StateObject(wrappedValue: AppRouter(session: session))
+
+        AppConfigurator.configure()
     }
 
     var body: some Scene {

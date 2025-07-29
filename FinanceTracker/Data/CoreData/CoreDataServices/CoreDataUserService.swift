@@ -32,13 +32,20 @@ final class CoreDataUserService: UserDataServiceProtocol {
     }
 
     func deleteUser() {
-        let request: NSFetchRequest<NSFetchRequestResult> = UserEntity.fetchRequest()
-        let deleteRequest = NSBatchDeleteRequest(fetchRequest: request)
+        deleteAllEntities(named: "UserEntity")
+        deleteAllEntities(named: "AccountEntity")
+        deleteAllEntities(named: "TransactionEntity")
+        deleteAllEntities(named: "CategoryEntity")
+        CoreDataStack.shared.saveContext()
+    }
+
+    private func deleteAllEntities(named entityName: String) {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
         do {
-            _ = try context.execute(deleteRequest)
-            CoreDataStack.shared.saveContext()
+            try context.execute(deleteRequest)
         } catch {
-            print("⚠️ Failed to delete all accounts:", error)
+            print("⚠️ Failed to delete \(entityName):", error)
         }
     }
 }

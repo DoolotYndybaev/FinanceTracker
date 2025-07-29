@@ -26,11 +26,16 @@ struct MainTabView: View {
                 }
                 .tag(TabFlow.exchange)
 
-            DashboardView()
-                .tabItem {
-                    Label("Profile", systemImage: "person.crop.circle")
-                }
-                .tag(TabFlow.profile)
+            ProfileView(
+                viewModel: ProfileViewModel(
+                    userService: CoreDataUserService(),
+                    router: router
+                )
+            )
+            .tabItem {
+                Label("Profile", systemImage: "person.crop.circle")
+            }
+            .tag(TabFlow.profile)
         }
         .onChange(of: selected) { newValue in
             router.flow = .main(.tabBar(newValue))

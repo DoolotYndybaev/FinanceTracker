@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct AddTransactionView: View {
-    var accounts: [Account]
-    var categories: [Category]
+    @Binding var accounts: [Account]
+    @Binding var categories: [Category]
     var onSave: (Transaction, Account) -> Void
 
     @Environment(\.dismiss) private var dismiss
@@ -70,6 +70,14 @@ struct AddTransactionView: View {
                     }
                 }
             }
+            .onAppear {
+                   if selectedAccount == nil {
+                       selectedAccount = accounts.first
+                   }
+                   if selectedCategory == nil {
+                       selectedCategory = filteredCategories.first
+                   }
+               }
         }
     }
 

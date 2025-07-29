@@ -8,6 +8,7 @@
 import Foundation
 
 final class DashboardViewModel: ObservableObject {
+    // MARK: - Published
     @Published var accounts: [Account] = []
     @Published var transactions: [Transaction] = []
     @Published var isPresentingAddTransaction = false
@@ -18,21 +19,25 @@ final class DashboardViewModel: ObservableObject {
         Category(name: "Other", icon: "🔖", isIncome: false)
     ]
 
+    // MARK: - Dependencies
     private let accountService: AccountDataServiceProtocol
     private let transactionService: TransactionDataServiceProtocol
     private let addTransactionUseCase: AddTransactionUseCaseProtocol
 
+    // MARK: - Init
     init(
-        accountService: AccountDataServiceProtocol = CoreDataAccountService(),
-        transactionService: TransactionDataServiceProtocol = CoreDataTransactionService(),
+        accountService: AccountDataServiceProtocol,
+        transactionService: TransactionDataServiceProtocol,
         addTransactionUseCase: AddTransactionUseCaseProtocol
     ) {
+        self.accountService = accountService
         self.transactionService = transactionService
         self.addTransactionUseCase = addTransactionUseCase
-        self.accountService = accountService
+
         reloadData()
     }
 
+    // MARK: - Computed
     var totalIncome: Double {
         transactionService.total(for: .income)
     }
@@ -42,9 +47,17 @@ final class DashboardViewModel: ObservableObject {
     }
 
     var totalBalance: Double {
-        accountService.fetchAllAccounts().first?.balance ?? 0
+        accounts.map(\.balance).reduce(0, +)
     }
 
+    func accountName(index: Int) -> String {
+        guard accounts.indices.contains(index) else {
+            return "No Account"
+        }
+        return accounts[index].name
+    }
+
+    // MARK: - Actions
     func addTransaction(_ tn: Transaction, to account: Account) {
         do {
             try addTransactionUseCase.execute(transaction: tn, to: account)
@@ -54,7 +67,8 @@ final class DashboardViewModel: ObservableObject {
         }
     }
 
-    private func reloadData() {
+    func reloadData() {
+        accounts = accountService.fetchAllAccounts()
         transactions = transactionService.transactions
     }
 }

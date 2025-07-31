@@ -14,7 +14,7 @@
 		B963A68C2DF8364F00841A2C /* Exceptions for "FinanceTracker" folder in "FinanceTracker" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				App/Info.plist,
+				App/Configure/Info.plist,
 			);
 			target = B9CEED952DF707F20017E039 /* FinanceTracker */;
 		};
@@ -269,7 +269,7 @@
 				DEVELOPMENT_TEAM = ZW22V9BT45;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = FinanceTracker/App/Info.plist;
+				INFOPLIST_FILE = FinanceTracker/App/Configure/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -303,7 +303,7 @@
 				DEVELOPMENT_TEAM = ZW22V9BT45;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = FinanceTracker/App/Info.plist;
+				INFOPLIST_FILE = FinanceTracker/App/Configure/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";

@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import UIKit
 
 struct MainTabView: View {
     @EnvironmentObject var router: AppRouter
@@ -29,9 +28,7 @@ struct MainTabView: View {
             ProfileView(
                 viewModel: ProfileViewModel(
                     userService: CoreDataUserService(),
-                    router: router
-                )
-            )
+                    router: router))
             .tabItem {
                 Label("Profile", systemImage: "person.crop.circle")
             }

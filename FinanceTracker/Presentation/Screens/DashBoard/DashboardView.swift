@@ -12,26 +12,16 @@ struct DashboardView: View {
     @StateObject private var viewModel = DashboardViewModelFactory.make()
     @State private var isPresentingAddAccount = false
 
-    private let addAccountUseCase: AddAccountUseCase
-
-    init() {
-        let context = CoreDataStack.shared.context
-
-        let userService = CoreDataUserService(context: context)
-        self.addAccountUseCase = AddAccountUseCase(userService: userService)
-    }
-
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
             VStack() {
                 headerSection
 
-                balanceCard
-                    .padding()
+                pagedBalanceCards
 
                 transactionsSection
             }
-            
+
             Button(action: {
                 viewModel.isPresentingAddTransaction = true
             }) {
@@ -55,14 +45,10 @@ struct DashboardView: View {
             }
             .sheet(isPresented: $isPresentingAddAccount) {
                 AddAccountView { newAccount, transaction in
-                    do {
-                        try addAccountUseCase.execute(newAccount)
-                        viewModel.addTransaction(transaction, to: newAccount)
-                        session.restore() // обновим session.currentUser
-                    } catch {
-                        print("Ошибка при добавлении счёта: \(error)")
+                    viewModel.addAccount(newAccount, with: transaction) {
+                        session.restore()
+                        isPresentingAddAccount = false
                     }
-                    isPresentingAddAccount = false
                 }
             }
             .onAppear {
@@ -85,39 +71,45 @@ struct DashboardView: View {
                 .font(.title2)
         }
         .padding()
-
     }
 
-    private var balanceCard: some View {
-        ZStack(alignment: .topTrailing) {
-            VStack(alignment: .leading, spacing: 16) {
-                Text("Total Balance")
-                    .font(.subheadline)
-                Text("$\(viewModel.totalBalance, specifier: "%.2f")")
-                    .font(.largeTitle)
-                    .bold()
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text("Income")
-                        Text("$\(viewModel.totalIncome, specifier: "%.2f")")
-                            .foregroundColor(.green)
-                    }
-                    Spacer()
-                    VStack(alignment: .leading) {
-                        Text("Expenses")
-                        Text("$\(viewModel.totalExpense, specifier: "%.2f")")
-                            .foregroundColor(.red)
-                    }
+    private var pagedBalanceCards: some View {
+        VStack(spacing: 0) {
+            TabView(selection: $viewModel.selectedAccountIndex) {
+                ForEach(Array(viewModel.accounts.enumerated()), id: \.element) { (index, account) in
+                    BalanceCardView(
+                        account: account,
+                        totalIncome: viewModel.totalIncome,
+                        totalExpense: viewModel.totalExpense,
+                        isActive: viewModel.selectedAccountIndex == index,
+                        onDelete: {
+                            viewModel.delete(account: account)
+                        }
+                    )
+                    .padding()
+                    .tag(index)
                 }
-            }
 
-            Text(viewModel.accountName(index: 0))
-                .font(.subheadline)
-                .padding(8)
+                addAccountCard
+                    .tag(viewModel.accounts.count)
+                    .padding()
+            }
+            .tabViewStyle(.page(indexDisplayMode: .never)) // скрываем системный индикатор
+            .frame(height: 200)
+
+            customPageIndicator // добавляем свой
         }
-        .padding()
-        .background(Color(.systemGray6))
-        .cornerRadius(20)
+    }
+
+    private var customPageIndicator: some View {
+        HStack(spacing: 8) {
+            ForEach(0..<(viewModel.accounts.count + 1), id: \.self) { index in
+                Circle()
+                    .fill(index == viewModel.selectedAccountIndex ? Color.blue : Color.gray.opacity(0.4))
+                    .frame(width: 8, height: 8)
+            }
+        }
+        .padding(.top, 4)
     }
 
     private var transactionsSection: some View {
@@ -126,8 +118,13 @@ struct DashboardView: View {
                 Text("Transactions History")
                     .font(.headline)
                 Spacer()
-                Button("See all") { }
-                    .font(.callout)
+                Picker("See all", selection: $viewModel.selectedFilter) {
+                    ForEach(TransactionFilter.allCases) { filter in
+                        Text(filter.rawValue).tag(filter)
+                    }
+                }
+                .pickerStyle(.menu)
+                .foregroundStyle(.main)
             }
 
             List {
@@ -142,75 +139,23 @@ struct DashboardView: View {
         .padding()
         .background(.clear)
     }
-}
 
-struct TransactionRowView: View {
-    let transaction: Transaction
-
-    var body: some View {
-        HStack {
-            Image(systemName: "arrow.up.right.circle.fill")
-                .font(.title2)
-                .foregroundColor(transaction.type == .income ? .green : .red)
-
-            VStack(alignment: .leading) {
-                Text(transaction.category.name)
-                Text(transaction.date, style: .date)
-                    .font(.caption)
-                    .foregroundColor(.gray)
+    private var addAccountCard: some View {
+        Button(action: {
+            isPresentingAddAccount = true
+        }) {
+            VStack(spacing: 12) {
+                Image(systemName: "plus.circle.fill")
+                    .font(.system(size: 42))
+                    .foregroundColor(.blue)
+                Text("Add Account")
+                    .font(.headline)
             }
-
-            Spacer()
-
-            Text("\(transaction.type == .income ? "+" : "-")$\(transaction.amount, specifier: "%.2f")")
-                .bold()
-                .foregroundColor(transaction.type == .income ? .green : .red)
-        }
-        .padding(.vertical, 4)
-    }
-}
-
-struct AddAccountView: View {
-    @Environment(\.dismiss) var dismiss
-    @State private var name: String = ""
-    @State private var balance: String = ""
-
-    var onSave: (Account, Transaction) -> Void
-
-    var body: some View {
-        NavigationView {
-            Form {
-                Section(header: Text("Account Info")) {
-                    TextField("Account Name", text: $name)
-                    TextField("Initial Balance", text: $balance)
-                        .keyboardType(.decimalPad)
-                }
-            }
-            .navigationTitle("New Account")
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
-                        guard let amount = Double(balance) else { return }
-                        let transaction = Transaction(
-                            id: UUID(),
-                            amount: amount,
-                            date: Date(),
-                            category: Category(name: "Initial Balance", icon: "💰", isIncome: true),
-                            note: .empty,
-                            type: .income
-                        )
-                        let account = Account(id: UUID(), name: name, balance: 0, transactions: []) // баланс обновится use-case'ом
-                        onSave(account, transaction)
-                        dismiss()
-                    }
-                }
-
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
-                        dismiss()
-                    }
-                }
-            }
+            .frame(maxWidth: .infinity)
+            .frame(height: 160)
+            .background(Color(.systemGray6))
+            .cornerRadius(20)
+            .shadow(radius: 4)
         }
     }
 }

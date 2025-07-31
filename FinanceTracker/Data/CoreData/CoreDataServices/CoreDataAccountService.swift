@@ -35,6 +35,19 @@ final class CoreDataAccountService: AccountDataServiceProtocol {
         }
     }
 
+    func delete(account: Account) throws {
+        let request: NSFetchRequest<AccountEntity> = AccountEntity.fetchRequest()
+        request.predicate = NSPredicate(format: "id == %@", account.id as CVarArg)
+        request.fetchLimit = 1
+
+        if let entity = try context.fetch(request).first {
+            context.delete(entity)
+            CoreDataStack.shared.saveContext()
+        } else {
+            throw NSError(domain: "CoreDataAccountService", code: 404, userInfo: [NSLocalizedDescriptionKey: "Account not found"])
+        }
+    }
+
     func upsert(_ account: Account, context: NSManagedObjectContext) -> AccountEntity {
         return AccountEntity.upsert(from: account, context: context)
     }

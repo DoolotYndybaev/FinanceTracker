@@ -8,19 +8,23 @@
 enum DashboardViewModelFactory {
     static func make() -> DashboardViewModel {
         let context = CoreDataStack.shared.context
+
         let accountService = CoreDataAccountService(context: context)
         let transactionService = CoreDataTransactionService(context: context)
+        let userService = CoreDataUserService(context: context)
 
-        let addUseCase = AddTransactionUseCase(
+        let addTransactionUseCase = AddTransactionUseCase(
             transactionService: transactionService,
             accountService: accountService,
             context: context
         )
 
+        let addAccountUseCase = AddAccountUseCase(userService: userService)
+
         return DashboardViewModel(
             accountService: accountService,
             transactionService: transactionService,
-            addTransactionUseCase: addUseCase
-        )
+            addAccountUseCase: addAccountUseCase,
+            addTransactionUseCase: addTransactionUseCase)
     }
 }

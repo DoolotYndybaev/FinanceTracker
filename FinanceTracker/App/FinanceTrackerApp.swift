@@ -9,22 +9,22 @@ import SwiftUI
 
 @main
 struct FinanceTrackerApp: App {
-    @StateObject private var session: UserSession
-    @StateObject private var router: AppRouter
+    @StateObject private var session: UserSession           // Глобальное состояние авторизации пользователя
+    @StateObject private var router: AppRouter              // Отвечает за навигацию между экранами
 
     init() {
         let session = UserSession()
         _session = StateObject(wrappedValue: session)
         _router = StateObject(wrappedValue: AppRouter(session: session))
 
-        AppConfigurator.configure()
+        AppConfigurator.configure()                         // Глобальная конфигурация приложения
     }
 
     var body: some Scene {
         WindowGroup {
             AppRootView()
-                .environmentObject(router)
-                .environmentObject(session)
+                .environmentObject(router)                  // Делаем AppRouter доступным во всем SwiftUI дереве
+                .environmentObject(session)                 // Делаем UserSession доступным во всем SwiftUI дереве
         }
     }
 }

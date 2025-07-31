@@ -32,7 +32,7 @@ final class AppRouter: ObservableObject {
     func goToProfile() {
         flow = .main(.tabBar(.profile))
     }
-    
+
     func goToAuth(mode: AuthViewModel.Mode) {
         flow = .auth(mode)
     }

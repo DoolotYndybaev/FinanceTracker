@@ -7,12 +7,6 @@
 
 import CoreData
 
-protocol UserDataServiceProtocol {
-    func fetchUser() -> User?
-    func saveUser(_ user: User) throws
-    func deleteUser()
-}
-
 final class CoreDataUserService: UserDataServiceProtocol {
     private let context: NSManagedObjectContext
 

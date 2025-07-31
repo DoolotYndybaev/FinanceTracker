@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct AppRootView: View {
-    @EnvironmentObject var router: AppRouter
-    @EnvironmentObject var session: UserSession
+    @EnvironmentObject var router: AppRouter         // Навигационный роутер приложения
+    @EnvironmentObject var session: UserSession      // Состояние авторизации пользователя
 
     var body: some View {
         switch router.flow {

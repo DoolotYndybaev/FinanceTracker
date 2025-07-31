@@ -37,14 +37,14 @@ final class DashboardViewModel: ObservableObject {
     // MARK: - Dependencies
     private let accountService: AccountDataServiceProtocol
     private let transactionService: TransactionDataServiceProtocol
-    private let addAccountUseCase: AddAccountUseCase
+    private let addAccountUseCase: AddAccountUseCaseProtocol
     private let addTransactionUseCase: AddTransactionUseCaseProtocol
 
     // MARK: - Init
     init(
         accountService: AccountDataServiceProtocol,
         transactionService: TransactionDataServiceProtocol,
-        addAccountUseCase: AddAccountUseCase,
+        addAccountUseCase: AddAccountUseCaseProtocol,
         addTransactionUseCase: AddTransactionUseCaseProtocol) {
         self.accountService = accountService
         self.transactionService = transactionService

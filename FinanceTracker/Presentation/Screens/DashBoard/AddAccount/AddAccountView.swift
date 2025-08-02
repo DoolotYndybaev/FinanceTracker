@@ -24,6 +24,7 @@ struct AddAccountView: View {
                 }
             }
             .navigationTitle("New Account")
+            .accessibilityIdentifier("addAccountTitle")
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {

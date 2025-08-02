@@ -60,6 +60,7 @@ struct OnboardingView: View {
                     PrimaryButton(title: "Get Started") {
                         onGetStartedTap()
                     }
+                    .accessibilityIdentifier("getStartedButton")
 
                     HStack(spacing: 4) {
                         Text("Already Have Account?")
@@ -74,6 +75,7 @@ struct OnboardingView: View {
                                 .font(.footnote)
                                 .underline()
                         }
+                        .accessibilityIdentifier("loginButton")
                     }
                 }
                 .padding(.horizontal, 24)

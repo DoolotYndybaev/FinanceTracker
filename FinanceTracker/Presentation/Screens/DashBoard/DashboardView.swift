@@ -157,5 +157,6 @@ struct DashboardView: View {
             .cornerRadius(20)
             .shadow(radius: 4)
         }
+        .accessibilityIdentifier("addAccountCard")
     }
 }

@@ -82,9 +82,11 @@ final class MockUserService: UserDataServiceProtocol {
 
 final class StubAddAccountUseCase: AddAccountUseCaseProtocol {
     private let userService: UserDataServiceProtocol
+    private let accountService: AccountDataServiceProtocol
 
-    init(userService: UserDataServiceProtocol) {
+    init(userService: UserDataServiceProtocol, accountService: AccountDataServiceProtocol) {
         self.userService = userService
+        self.accountService = accountService
     }
 
     func execute(_ account: Account) throws {
@@ -93,6 +95,8 @@ final class StubAddAccountUseCase: AddAccountUseCaseProtocol {
         }
         user.accounts.append(account)
         try userService.saveUser(user)
+
+        accountService.add(account)
     }
 }
 
@@ -124,6 +128,56 @@ final class StubAddTransactionUseCase: AddTransactionUseCaseProtocol {
 
 final class DashboardViewModelTests: XCTestCase {
 
+    func testAddAccountWithTransaction_shouldAddAccountAndTransaction() {
+        // Arrange
+        let mockAccountService = MockAccountDataService()
+        let mockTransactionService = MockTransactionDataService()
+        let mockUserService = MockUserService()
+        
+        // Предзаполненный пользователь
+        let user = User(id: UUID(), name: "Test User",email: "Test email", password: "password", accounts: [])
+        try? mockUserService.saveUser(user)
+
+        let newAccount = Account(
+            id: UUID(),
+            name: "New Card",
+            balance: 0,
+            transactions: []
+        )
+        
+        let initialTransaction = Transaction(
+            id: UUID(),
+            amount: 200,
+            date: Date(),
+            category: Category(name: "Deposit", icon: "🏦", isIncome: true),
+            note: "Initial top-up",
+            type: .income
+        )
+
+        let viewModel = DashboardViewModel(
+            accountService: mockAccountService,
+            transactionService: mockTransactionService,
+            addAccountUseCase: StubAddAccountUseCase(userService: mockUserService, accountService: mockAccountService),
+            addTransactionUseCase: StubAddTransactionUseCase(
+                transactionService: mockTransactionService,
+                accountService: mockAccountService
+            )
+        )
+
+        // Act
+        let expectation = XCTestExpectation(description: "Account and transaction added")
+        viewModel.addAccount(newAccount, with: initialTransaction) {
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 1.0)
+
+        // Assert
+        XCTAssertEqual(viewModel.accounts.count, 1)
+        XCTAssertEqual(viewModel.accounts.first?.name, "New Card")
+        XCTAssertEqual(viewModel.accounts.first?.transactions.count, 1)
+        XCTAssertEqual(viewModel.accounts.first?.balance, 200)
+    }
+
     func testAddTransaction_shouldUpdateTotalIncomeAndAccountTransactions() {
         // Arrange
         let mockAccountService = MockAccountDataService()
@@ -146,20 +200,60 @@ final class DashboardViewModelTests: XCTestCase {
             note: "Initial deposit",
             type: .income
         )
-
+        
         let viewModel = DashboardViewModel(
             accountService: mockAccountService,
             transactionService: mockTransactionService,
-            addAccountUseCase: StubAddAccountUseCase(userService: mockUserService),
+            addAccountUseCase: StubAddAccountUseCase(userService: mockUserService, accountService: mockAccountService),
             addTransactionUseCase: StubAddTransactionUseCase(
                 transactionService: mockTransactionService,
                 accountService: mockAccountService))
         // Act
         viewModel.addTransaction(transaction, to: account)
-
+        
         // Assert
         XCTAssertEqual(viewModel.transactions.count, 1)
         XCTAssertEqual(viewModel.totalIncome, 150)
         XCTAssertEqual(viewModel.totalExpense, 0)
+    }
+
+    func testAddExpenseTransaction_shouldUpdateTotalExpense() {
+        let mockAccountService = MockAccountDataService()
+        let mockTransactionService = MockTransactionDataService()
+        let mockUserService = MockUserService()
+
+        let account = Account(
+            id: UUID(),
+            name: "Cash",
+            balance: 0,
+            transactions: []
+        )
+
+        mockAccountService.add(account)
+
+        let expenseTransaction = Transaction(
+            id: UUID(),
+            amount: 50,
+            date: Date(),
+            category: Category(name: "Food", icon: "🍔", isIncome: false),
+            note: "Lunch",
+            type: .expense
+        )
+
+        let viewModel = DashboardViewModel(
+            accountService: mockAccountService,
+            transactionService: mockTransactionService,
+            addAccountUseCase: StubAddAccountUseCase(userService: mockUserService, accountService: mockAccountService),
+            addTransactionUseCase: StubAddTransactionUseCase(
+                transactionService: mockTransactionService,
+                accountService: mockAccountService))
+        // Act
+        viewModel.addTransaction(expenseTransaction, to: account)
+        
+        // Assert
+        XCTAssertEqual(viewModel.transactions.count, 1)
+        XCTAssertEqual(viewModel.totalIncome, 0)
+        XCTAssertEqual(viewModel.totalExpense, 50)
+        XCTAssertEqual(viewModel.accounts.first?.balance, -50)
     }
 }

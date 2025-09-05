@@ -19,7 +19,7 @@ struct MainTabView: View {
                 }
                 .tag(TabFlow.dashboard)
 
-            DashboardView()
+            ExchangeView()
                 .tabItem {
                     Label("Exchange", systemImage: "dollarsign.circle")
                 }

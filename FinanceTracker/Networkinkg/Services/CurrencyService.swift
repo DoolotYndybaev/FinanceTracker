@@ -12,7 +12,7 @@ final class CurrencyService {
 
     func getExchangeRates(base: String) async throws -> [String: Double] {
            let endpoint = ExchangeRateEndpoint(baseCurrency: base)
-           let response = try await apiClient.send(endpoint, responseType: ExchangeRateResponse.self)
+           let response: ExchangeRateResponse = try await apiClient.send(endpoint)
 
            guard response.success != false else {
                throw NetworkError.invalidResponse

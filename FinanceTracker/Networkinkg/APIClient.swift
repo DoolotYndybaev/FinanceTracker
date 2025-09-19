@@ -7,7 +7,7 @@
 import Foundation
 
 final class APIClient {
-    func send<T: Decodable>(_ endpoint: Endpoint, responseType: T.Type) async throws -> T {
+    func send<T: Decodable>(_ endpoint: Endpoint) async throws -> T {
         let request = try endpoint.makeRequest()
 
         let (data, response): (Data, URLResponse)
